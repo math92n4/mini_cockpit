@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'MiniSansSerif';
+    src: url('./fonts/MINISansSerif.ttf');
+}
+
+body {
+    background: rgb(138,143,153);
+    background: linear-gradient(90deg, rgba(138,143,153,1) 0%, rgba(124,100,156,1) 100%);
+    color: black;
+    font-family: 'MiniSansSerif', sans-serif;
+}
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
