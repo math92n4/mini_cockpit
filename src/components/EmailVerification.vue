@@ -25,7 +25,7 @@ export default {
       const token = urlParams.get('token');
 
       if (token) {
-        const res = await fetchGet(`/api/verify?token=${token}`)
+        const res = await fetchGet(`/api/mini/verify?token=${token}`)
         message.value = res.message;
         
         if(res.statusCode == 200) {
