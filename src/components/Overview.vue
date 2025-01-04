@@ -72,7 +72,7 @@ export default {
             },
           },
         },
-        
+        /*
         {
           type: "bar",
           data: {
@@ -98,6 +98,7 @@ export default {
             },
           },
         },
+        */
         
         
       ],

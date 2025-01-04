@@ -1,60 +1,78 @@
-
 <template>
 
   <div class="table-modal border">
+    
     <div class="top">
-        <h2>Detaljer</h2>
+        <h2>DETALJER</h2>
+
+        <div class="right">
+
+            <div class="inputs">
+
+                <p v-if="updateMessage"> {{ updateMessage }} </p>
+                <button @click="deleteDetails(car.productionNumber)">Slet</button>
+                <button @click="updateCarClick">Opdater</button>
+                <button class="button" @click="deselectCar">Gå tilbage</button>
+
+            </div>
+
+        </div>
     </div>
 
     <div class="details">
+
     <div class="details-left">
         <h2>Detaljer om bilen</h2>
         <div class="detail-info">
             <h3>
                 Production Number:
-                <img class="img-svg" src="@/assets/update.svg">
             </h3> 
-            <p>{{ car.productionNumber }}</p>
+            <p> {{ car.productionNumber || 'Ikke sat' }} </p>
         </div>
         
         <div class="detail-info">
             <h3>
                 Model Description:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('modelDescription')">
             </h3>
-            <p>{{ car.modelDescription || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.modelDescription"> {{ car.modelDescription && car.modelDescription !== 'null' ? car.modelDescription : 'Ikke sat' }}</p>
+            <input v-else v-model="editedCar.modelDescription"/>
         </div>
 
         <div class="detail-info">
             <h3>
                 Model Code:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('modelCode')">
             </h3>
-            <p>{{ car.modelCode || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.modelCode">{{ car.modelCode || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.modelCode"/>
         </div>
         
         <div class="detail-info">
             <h3>
                 Brand:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('brand')">
             </h3>
-            <p>{{ car.brand || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.brand">{{ car.brand && car.brand !== 'NULL' ? car.brand : 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.brand"/>
         </div>
 
         <div class="detail-info">
             <h3>
                 Options string:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('optionsString')">
             </h3>
-            <p>{{ car.optionsString || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.optionsString"> {{ car.optionsString || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.optionsString"/>
         </div>
 
         <div class="detail-info">
             <h3>
                 Production date:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('actualProductionDate')">
             </h3>
-            <p>{{ car.actualProductionDate || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.actualProductionDate">{{ car.actualProductionDate || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.actualProductionDate" type="date">
         </div>
         
     </div>
@@ -65,49 +83,55 @@
 
             <h3>
                 Customer zip:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('customerZip')">
             </h3>
-            <p>{{ car.zip || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.customerZip"> {{ car.zip || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.zip">
         </div>
 
         <div class="detail-info">
             <h3>
                 Customer mail
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('customerMail')">
             </h3>
-            <p>{{ car.customerMail || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.customerMail"> {{ car.customerMail || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.customerMail">
         </div>
 
         <div class="detail-info">
             <h3>
                 Customer name
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('customerName')">
             </h3>
-            <p>{{ car.customerName || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.customerName"> {{ car.customerName || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.customerName">
         </div>
 
         <div class="detail-info">
             <h3>
                 Agreement date
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('purchaseAgreementDate')">
             </h3>
-            <p>{{ car.purchaseAgreementDate || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.purchaseAgreementDate" >{{ car.purchaseAgreementDate || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.purchaseAgreementDate" type="date">
         </div>
 
         <div class="detail-info">
             <h3>
                 Planned handover week:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('plannedHandoverWeek')">
             </h3>
-            <p>{{ car.plannedHandoverWeek || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.plannedHandoverWeek" >{{ car.plannedHandoverWeek || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.plannedHandoverWeek" placeholder="yyyy-mm-ww">
         </div>
 
         <div class="detail-info">
             <h3>
                 Expected delivery week:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('expectedDeliveryWeek')">
             </h3>
-            <p>{{ car.expectedDeliveryWeek || 'Ikke sat'}}</p>
+            <p v-if="!inputFields.expectedDeliveryWeek" >{{ car.expectedDeliveryWeek || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.expectedDeliveryWeek" placeholder="yyyy-mm-ww">
         </div>
 
     </div>
@@ -118,18 +142,19 @@
         <div class="detail-info">
             <h3>
                 Sales person:
-                <img class="img-svg" src="@/assets/update.svg">
+                
             </h3>
-            <p>{{ car.salesPerson || 'Ikke sat'}}</p>
+            <p> {{ editedCar.salesPerson || 'Ikke sat'}}</p>
+            
         </div>
 
         <div class="detail-info">
             <h3>
                 Retail counting date:
-                <img class="img-svg" src="@/assets/update.svg">
+                <img class="img-svg" src="@/assets/update.svg" @click="openInput('retailCountingDate')">
             </h3>
-            <p>{{ car.retailCountingDate || 'Ikke sat'}}</p>
-            
+            <p v-if="!inputFields.retailCountingDate" >{{ car.retailCountingDate || 'Ikke sat'}}</p>
+            <input v-else v-model="editedCar.retailCountingDate" type="date">
         </div>
 
 
@@ -142,33 +167,84 @@
             <h3>Ivsr:</h3>
             <p>{{ car.ivsrData ? 'Hentet' : 'Ikke hentet'}}</p>
         </div>
+
+        
     </div>
 </div>
     
-<button @click="deleteDetails(car.productionNumber)">Slet</button>
-<button>Opdater</button>
 
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-import { fetchDelete } from '../stores/auth'
+import { defineProps, onMounted } from 'vue';
+import { fetchDelete, updateCar } from '../stores/auth'
 import { useRouter } from "vue-router";
+import { reactive, ref } from 'vue';
 
-defineProps(['car']);
+const props = defineProps({
+    car: Object,
+    deselectCar: Function,
+});
+
 const router = useRouter();
+const editedCar = reactive({})
+
+const updateMessage = ref('')
+
+onMounted(() => {
+    Object.assign(editedCar, props.car)
+})
+
+const inputFields = reactive({
+    modelDescription: false,
+    modelCode: false,
+    brand: false,
+    optionsString: false,
+    actualProductionDate: false,
+    customerZip: false,
+    customerMail: false,
+    customerName: false,
+    purchaseAgreementDate: false,
+    plannedHandoverWeek: false,
+    expectedDeliveryWeek: false,
+    salesPerson: false,
+    retailCountingDate: false,
+})
+
+function openInput(field) {
+    if(inputFields[field]) {
+        inputFields[field] = false;
+    } else {
+        inputFields[field] = true;
+    }
+}
 
 async function deleteDetails(id) {
     console.log(id);
     try {
         const res = await fetchDelete(id);
         if (res.ok) {
-            router.push('/cockpit');
+            location.reload()
         } else {
             console.log(res);
         }
     } catch (error) {
+        console.log(error)
+    }
+}
+
+async function updateCarClick() {
+    console.log(editedCar)
+    try {
+        const res = await updateCar(editedCar)
+        if(!res.ok) {
+            console.log("DIDNT WORK");
+            updateMessage.value = "Opdateringen gik galt"
+        } else {
+            updateMessage.value = "Opdateret!"
+        }
+    } catch(error) {
         console.log(error)
     }
 }

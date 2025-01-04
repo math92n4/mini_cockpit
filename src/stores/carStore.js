@@ -27,8 +27,7 @@ export const useCarsStore = defineStore('cars', () => {
         const res = await fetchPost(token, '/api/ivsr/add', {
             "productionNumber": productionNumber,
         })
-        const data = res;
-        return data;
+        return res
     }
   
     return { cars, graphData, fetchGraph, fetchCars, postCar };

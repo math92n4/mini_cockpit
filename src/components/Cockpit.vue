@@ -10,14 +10,6 @@
 
               <div class="inputs">
 
-                <select>
-                  <option>Intet filter</option>
-                  <option>Sharepoint</option>
-                  <option>Ivsr</option>
-                  <option>Begge</option>
-                  <option>Ingen</option>
-                </select>
-
                 <input type="text" v-model="inputText">
                 <input type="date" v-model="inputDate">
                 
@@ -40,7 +32,7 @@
             <tbody>
                 <tr v-for="(car) in paginatedCars" :key="car.productionNumber" @click="goToCar(car)">
                     <td>{{ car.productionNumber || 'Ikke sat' }}</td>
-                    <td>{{ car.modelDescription || 'Ikke sat' }}</td>
+                    <td>{{ car.modelDescription && car.modelDescription !== 'null' ? car.modelDescription : 'Ikke sat' }}</td>
                     <td>{{ car.modelCode || 'Ikke sat' }}</td>
                     <td>{{ car.purchaseAgreementDate || 'Ikke sat' }}</td>
 
@@ -68,9 +60,9 @@
         </table>
 
       <div class="pagination">
-        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Forrige</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Næste</button>
       </div>
     
     </div>
@@ -78,18 +70,20 @@
   </div>
 
   <div v-else>
-    <CarDetails :car="carSelected"/>
-    <button @click="deselectCar">Gå tilbage</button>
+    <CarDetails :car="carSelected" :deselectCar="deselectCar"/>
   </div>
 
   <div v-if="modalOpen" class="modal-overlay">
     <div class="modal" @submit.prevent="add">
-      <form class="login">
+      <form class="login" style="width: 300px;">
         <h2>Opret et salg</h2>
         <input type="text" v-model="inputProductionNumber" placeholder="Produktionsnummer">
-        <button type="submit">Opret</button>
+        
+        <p v-if="createMessage"> {{ createMessage }} </p>
+
+        <button style="margin-top: 20px;" class="button" type="submit">Opret</button>
         <br>
-        <button @click="closeModal">Gå tilbage</button>
+        <button class="button" @click="closeModal">Gå tilbage</button>
       </form>
     </div>
   </div>
@@ -114,6 +108,8 @@ const pageSize = ref(10);
 
 const inputText = ref('');
 const inputDate = ref('');
+
+const createMessage = ref('')
 
 const inputProductionNumber = ref('')
 
@@ -202,6 +198,7 @@ const add = async () => {
   const postProductionNumber = inputProductionNumber.value;
   console.log(postProductionNumber)
   const post = await carsStore.postCar(postProductionNumber);
+  createMessage.value = `${postProductionNumber} oprettet!`
 }
 
 </script>
@@ -341,7 +338,6 @@ tbody td {
 }
 
 .modal {
-  background-color: rgb(255, 255, 255);
   border-radius: 8px;
 }
 

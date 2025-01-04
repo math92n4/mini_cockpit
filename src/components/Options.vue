@@ -8,12 +8,14 @@
         <div class="modal" @submit.prevent="submit">
             <form class="login">
                 <h2>Ændr kodeord</h2>
-                <input type="text" v-model="oldPassword" placeholder="Gammelt kodeord">
-                <input type="text" v-model="newPassword" placeholder="Nyt kodeord">
-                <p v-if="message">{{ message }}</p>
-                <button type="submit">Ændr</button>
+                <input type="password" v-model="oldPassword" placeholder="Gammelt kodeord">
+                <input type="password" v-model="newPassword" placeholder="Nyt kodeord">
+                
+                <p v-if="changePassMessage">{{ changePassMessage }}</p>
+            
+                <button class="button" style="margin-top: 20px;" type="submit">Ændr</button>
                 <br>
-                <button @click="closeModal">Gå tilbage</button>
+                <button class="button" @click="closeModal">Gå tilbage</button>
             </form>
         </div>
     </div>
@@ -36,8 +38,8 @@
     
 
         <div v-if="profile" class="option-content">
-            <button @click="openModal">Ændr kodeord</button>
-            <button @:click="logoutClick">Log ud</button>
+            <button class="button" @click="openModal">Ændr kodeord</button>
+            <button class="button" @:click="logoutClick">Log ud</button>
         </div>
         
         <div v-else class="option-content">
@@ -48,7 +50,8 @@
             <button v-if="readyToUpload" @click="uploadIvsr">Upload</button>
 
             <input type="file" id="file" @change="checkFile"></input>
-            <button @click="fetchSpData">Hent sharepoint data</button>
+
+            <button class="button" @click="fetchSpData">Hent sharepoint data</button>
             
         </div>
 
@@ -67,6 +70,8 @@ const oldPassword = ref('')
 const newPassword = ref('')
 const message = ref('');
 const store = useStore();
+
+const changePassMessage = ref('')
 
 const profile = ref('true')
 
@@ -106,7 +111,8 @@ async function submit() {
     
 
     if(old === '' || newP === '') {
-        message.value = "Udfyld begge"
+        changePassMessage.value = "Udfyld begge"
+        return
     }
 
     const token = localStorage.getItem('token')
@@ -116,8 +122,11 @@ async function submit() {
         "newPassword": newP
     })
     
-    if(res.ok) {
+    if(res.token && res.email) {
         localStorage.setItem("token", res.token)
+        changePassMessage.value = "Kodeord ændret!"
+    } else {
+        changePassMessage.value = "Noget gik galt"
     }
 
     return res;
@@ -230,6 +239,8 @@ label[for=file] {
 	border-radius: 2em;
     cursor: pointer;
 }
+
+
 
 
 </style>

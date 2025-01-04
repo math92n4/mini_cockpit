@@ -140,5 +140,29 @@ export async function fetchDelete(id) {
         }
 }
 
+export async function updateCar(car) {
+    const token = localStorage.getItem("token")
+    try {
+        
+        const res = await fetch(`${API_URL}/api/ivsr`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(car)
+        });
+
+        console.log(res)
+
+        
+        return res;
+
+        } catch (error) {
+            console.error(error)
+            return false;
+        }
+}
+
 
 

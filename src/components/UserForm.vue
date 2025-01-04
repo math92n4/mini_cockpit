@@ -18,9 +18,9 @@
       <router-link to="/register">Register dig her!</router-link>
     </p>
 
-    <p v-if="resMessage"><a href="#">Glemt kodeord?</a></p>
+    <p v-if="resMessage"> {{ resMessage }} </p>
 
-    <button type="submit">
+    <button class="button" type="submit">
       {{ isRegister ? 'Registrer' : 'Login' }}</button>
   </form>
 </template>
@@ -79,7 +79,7 @@ export default {
       } else {
         const res = await store.login(user)
         if(!res.ok) {
-          this.resMessage = "nej"
+          this.resMessage = "Noget gik galt"
         }
       }
 
@@ -161,7 +161,6 @@ input::placeholder, textarea::placeholder {
 
 .login button {
   width: 100%;
-  padding: 2px;  
 }
 
 
