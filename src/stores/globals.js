@@ -1,2 +1,2 @@
-const API_URL = "http://localhost:8084/mini";
+const API_URL = "http://localhost:8084";
 export default API_URL;

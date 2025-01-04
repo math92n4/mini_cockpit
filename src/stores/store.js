@@ -14,7 +14,7 @@ export const useStore = defineStore('user', () => {
     const login = async (credentials) => {
 
         try {
-            const res = await fetchPost(credentials,'/api/user/authenticate')
+            const res = await fetchPost(credentials,'/api/mini/user/authenticate')
 
             if(res.token) {
                 user.value = res;

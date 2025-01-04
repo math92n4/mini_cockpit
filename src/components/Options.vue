@@ -117,7 +117,7 @@ async function submit() {
 
     const token = localStorage.getItem('token')
     
-    const res = await fetchPut(token, '/api/user/update', {
+    const res = await fetchPut(token, '/api/mini/user/update', {
         "oldPassword": old,
         "newPassword": newP
     })

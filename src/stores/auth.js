@@ -92,7 +92,7 @@ export async function postFile(file) {
     try {
         const formData = new FormData();
         formData.append("file", file)
-        const res = await fetch(`${API_URL}/api/ivsr/upload`, {
+        const res = await fetch(`${API_URL}/api/mini/ivsr/upload`, {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -120,7 +120,7 @@ export async function fetchDelete(id) {
     const token = localStorage.getItem("token")
     try {
         
-        const res = await fetch(`${API_URL}/api/ivsr/${id}`, {
+        const res = await fetch(`${API_URL}/api/mini/ivsr/${id}`, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export async function updateCar(car) {
     const token = localStorage.getItem("token")
     try {
         
-        const res = await fetch(`${API_URL}/api/ivsr`, {
+        const res = await fetch(`${API_URL}/api/mini/ivsr`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',

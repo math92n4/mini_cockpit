@@ -75,7 +75,7 @@ export default {
   
 
       if(this.isRegister) {
-        const res = await fetchPost(user, '/api/user/register')
+        const res = await fetchPost(user, '/api/mini/user/register')
       } else {
         const res = await store.login(user)
         if(!res.ok) {
