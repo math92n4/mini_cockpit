@@ -26,7 +26,7 @@ jobs:
       - name: Prepare deployment
         run: |
           mkdir -p deploy
-          cp -r dist/* deploy/
+          cp -r * deploy/
 
       - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.4
