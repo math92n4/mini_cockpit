@@ -1,4 +1,9 @@
 <template>
+
+  <div class="logo">
+    <img src="../assets/logo.png" alt="Logo">
+  </div>
+
   <form v-if="showForm" class="login" @submit.prevent="submit">
     <h2>{{ isRegister ? 'Registrer dig her!' : 'HEJ, OG VELKOMMEN!' }}</h2>
     <h3>{{ isRegister ? 'Gå tilbage til login, hvis du allerede er registreret...' : 'Du skal logge ind, hvis du vil videre...' }}</h3>
@@ -13,7 +18,7 @@
       <router-link to="/register">Register dig her!</router-link>
     </p>
 
-    <p v-if="resMessage">{{ resMessage }}</p>
+    <p v-if="resMessage"><a href="#">Glemt kodeord?</a></p>
 
     <button type="submit">
       {{ isRegister ? 'Registrer' : 'Login' }}</button>
@@ -21,10 +26,10 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { fetchPost } from '@/stores/fetch/fetch';
+import { onMounted, ref } from 'vue';
+import { fetchPost } from '@/stores/util/fetch';
 import { useRouter } from 'vue-router';
-
+import { useStore } from '@/stores/store';
 
 
 export default {
@@ -51,36 +56,30 @@ export default {
   setup() {
     const resMessage = ref('')
     const router = useRouter();
+    
+
     return {
       resMessage,
-      router
+      router,
     }
   },
 
   methods: {
     async submit() {
-      
+      const store = useStore();
+
       const user = {
         email: this.email,
         pw: this.password
       }
-      console.log(user);
-      
-
-      let url = "";
+  
 
       if(this.isRegister) {
-        url = '/api/user/register'
+        const res = await fetchPost(user, '/api/user/register')
       } else {
-        url = '/api/user/authenticate'
-      }
-
-      if(this.email && this.password) {
-        const res = await fetchPost(user, url)
-        this.resMessage = res.message;
-
-        if(res.token) {
-          this.router.push('/cockpit');
+        const res = await store.login(user)
+        if(!res.ok) {
+          this.resMessage = "nej"
         }
       }
 
@@ -95,6 +94,12 @@ export default {
 </script>
 <style>
 
+.logo {
+  display: flex;
+  justify-content: center;
+  margin: 50px auto;
+}
+
 .login {
   max-width: 300px;
   margin: 50px auto;
@@ -102,6 +107,7 @@ export default {
   border: 1px solid #1f0e0e;
   border-radius: 8px;
   background: #ffffff;
+  
 }
 
 .login h2 {
@@ -155,13 +161,7 @@ input::placeholder, textarea::placeholder {
 
 .login button {
   width: 100%;
-  padding: 10px;
-  background-color: #000000;
-  border: none;
-  color: rgb(255, 255, 255);
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 20px;
+  padding: 2px;  
 }
 
 

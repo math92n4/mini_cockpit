@@ -8,7 +8,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { fetchGet } from '@/stores/fetch/fetch';
+import { fetchGet } from '@/stores/util/fetch';
 import { useRouter } from 'vue-router';
 
 

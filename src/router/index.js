@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, useRouter } from 'vue-router'
 import UserForm from '../components/UserForm.vue'
 import EmailVerification from '../components/EmailVerification.vue'
 import Cockpit from '../components/Cockpit.vue'
@@ -27,8 +27,16 @@ const router = createRouter({
       path: '/cockpit',
       name: 'Cockpit',
       component: Cockpit,
+      meta: {
+        requiresLogin: true,
+      },
     },
+    {
+      path: '/:catchAll(.*)*',
+      component: UserForm
+    }
   ],
 })
 
-export default router
+
+export default router;
