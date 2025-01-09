@@ -164,7 +164,7 @@ async function uploadIvsr() {
 
 async function fetchSpData() {
     const token = localStorage.getItem("token")
-    const res = await fetchPost(token, '/api/sp/case', {});
+    const res = await fetchPost(token, '/api/mini/sp/case', {});
 
 }
 
