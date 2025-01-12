@@ -5,24 +5,54 @@
         </div>
 
         <div class="charts-grid">
-            <div v-for="(chart, index) in charts" :key="index" class="chart-container">
-                <canvas :ref="'chartCanvas' + index"></canvas>
-            </div>
+          <div class="iframe-container">
+            <iframe
+              :src="iframeSrc" frameborder="0">
+            </iframe>
+          </div>
         </div>
         
     </div>
     
 </template>
 
-<script>
+<script setup>
 import { createChart } from '../stores/util/chart/chartUtil'
 import { useCarsStore } from '@/stores/carStore';
+import API_URL from '@/stores/globals';
 import { useStore } from '@/stores/store';
+import { onMounted, ref } from 'vue';
 
+const iframeSrc = ref('');
+
+onMounted(async () => {
+  const data = await fetchMetabaseQuestion();
+  iframeSrc.value = data.url;
+  console.log(iframeSrc.value);
+})
+
+async function fetchMetabaseQuestion() {
+  const res = await fetch(`${API_URL}/api/mini/metabase/34`)
+  if(res.ok) {
+    console.log("suck cock");
+    const data = await res.json();
+    return data;
+  }
+}
+
+
+
+/*
+<div class="charts-grid">
+            <div v-for="(chart, index) in charts" :key="index" class="chart-container">
+                <canvas :ref="'chartCanvas' + index"></canvas>
+            </div>       
+        </div>
 export default {
   name: "Overview",
   data() {
     return {
+      
       charts: [
         {
           type: "bar",
@@ -72,7 +102,7 @@ export default {
             },
           },
         },
-        /*
+        
         {
           type: "bar",
           data: {
@@ -98,10 +128,11 @@ export default {
             },
           },
         },
-        */
+        
         
         
       ],
+      
     };
   },
   async mounted() {
@@ -141,10 +172,12 @@ export default {
         createChart(canvas, chartConfig);
       });
     },
+    
+    
 
   }
 };
-
+*/
 
 </script>
 
@@ -180,6 +213,13 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   width: 100%;
+}
+
+
+iframe {
+  height: 600px; 
+  width: 100%; 
+  
 }
 
 @media (max-width: 768px) {
