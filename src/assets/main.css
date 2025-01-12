@@ -81,3 +81,13 @@ body {
   opacity: 0;
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;      
+  height: 100px;           
+}
+
+.drop-shadow {
+  filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.3))
+}

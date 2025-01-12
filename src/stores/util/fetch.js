@@ -21,12 +21,6 @@ export async function fetchPost(body, path) {
         },
         body: JSON.stringify(body),
     });
-    if(response.ok) {
-        const data = await response.json();
-        console.log(data)
-        return data
-    } else {
-        return response;
-    }
+    return response;
     
 }

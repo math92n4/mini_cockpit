@@ -3,5 +3,5 @@ export const devServer = {
 };
 
 module.exports = {
-    publicPath: '/mini/'
+    publicPath: '/mini'
 }

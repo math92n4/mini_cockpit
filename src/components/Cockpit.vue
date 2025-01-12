@@ -2,7 +2,7 @@
 
 <div>
   <div v-if="!carSelected">
-    <div class="table-modal border">
+    <div class="table-modal border drop-shadow">
         <div class="top">
             <h2>VORES SALG</h2>
 

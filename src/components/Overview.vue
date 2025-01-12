@@ -1,5 +1,5 @@
 <template>
-    <div class="container border">
+    <div class="container border drop-shadow">
         <div class="top">
             <h2>OVERSIGT</h2>
         </div>

@@ -30,7 +30,6 @@ export async function fetchGet(token, url) {
 }
 
 export async function fetchPost(token, url, body) {
-    const router = useRouter();
 
     try {
         const res = await fetch(`${API_URL}${url}`, {
@@ -42,19 +41,10 @@ export async function fetchPost(token, url, body) {
             body: JSON.stringify(body)
         })
 
-        if(res.status === 403) {
-            router.push("/")
-            return false;
-        }
-
-        const data = await res.json()
-        console.log(data);
-        return data;
+        return res;
 
     } catch (error) {
         console.error(error)
-
-        return false;
     }
 }
 

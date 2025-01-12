@@ -1,9 +1,20 @@
 <template>
-    <div>
-      <h1>Email Verification</h1>
+
+  <div class="logo">
+    <img src="../assets/logo.png" alt="Logo">
+  </div>
+
+    <div class="login drop-shadow">
+      <h2>Email Verifikation</h2>
       <p>{{ message }}</p>
-      <p v-if="backToLogin">Redirecting back to login..</p>
+      <p>Du bliver nu sendt tilbage til login..</p>
+
+      <div class="spinner-container">
+        <img src="/src/assets/spinner.gif">
+      </div>
+
     </div>
+
   </template>
 
 <script>
@@ -17,7 +28,6 @@ export default {
   setup() {
     
     const message = ref("");
-    const backToLogin = ref(false);
     const router = useRouter();
 
     onMounted(async () => {
@@ -27,20 +37,19 @@ export default {
       if (token) {
         const res = await fetchGet(`/api/mini/verify?token=${token}`)
         message.value = res.message;
-        
-        if(res.statusCode == 200) {
-            backToLogin.value = true;
-            setTimeout(() => {
-                router.push('/');
-            }, 5000)
-        }
+         
 
       } else {
-        message.value = "No token"
+        message.value = "Ingen token"
       }
+
+      setTimeout(() => {
+          router.push('/');
+        }, 5000)
+
     });
     
-    return { message, backToLogin };
+    return { message };
   }
 };
 </script>

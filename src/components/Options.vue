@@ -1,9 +1,6 @@
 <template>
     <div>
-        <div class="header">
-            <h2>INDSTILLING</h2>
-        </div>
-
+        
     <div v-if="modalOpen" class="modal-overlay">
         <div class="modal" @submit.prevent="submit">
             <form class="login">
@@ -22,7 +19,7 @@
         
 
 
-  <div class="menu border">
+  <div class="menu border drop-shadow">
     <div class="option-top">
         <ul>
         <li :class="{ 'active-option' : profile }">
@@ -37,21 +34,30 @@
     </div>
     
 
-        <div v-if="profile" class="option-content">
+        <div v-if="profile" class="option-content border">
             <button class="button" @click="openModal">Ændr kodeord</button>
             <button class="button" @:click="logoutClick">Log ud</button>
         </div>
         
-        <div v-else class="option-content">
+        <div v-else class="option-content border">
             
             <label for="file">Upload ivsr</label>
 
+            <p v-if="file">{{ file.name }}</p>
+
             <p v-if="message" class="red">{{ message }} </p>
+
             <button v-if="readyToUpload" @click="uploadIvsr">Upload</button>
 
             <input type="file" id="file" @change="checkFile"></input>
 
             <button class="button" @click="fetchSpData">Hent sharepoint data</button>
+
+            <div v-if="isLoading" class="spinner-container">
+                <img src="/src/assets/spinner.gif">
+            </div>
+
+            <p v-if="uploadMessage">{{ uploadMessage }}</p>
             
         </div>
 
@@ -64,19 +70,21 @@
 import { useStore } from '@/stores/store';
 import { ref } from 'vue';
 import { fetchPut, postFile, fetchPost } from '@/stores/auth'
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const modalOpen = ref(false)
 const oldPassword = ref('')
 const newPassword = ref('')
 const message = ref('');
 const store = useStore();
-
+const isLoading = ref(false)
+const uploadMessage = ref('')
 const changePassMessage = ref('')
 
 const profile = ref('true')
 
 const file = ref(null)
-const uploadMessage = ref('')
 
 const readyToUpload = ref(false);
 
@@ -101,9 +109,7 @@ function showData() {
     profile.value = false;
 }
 
-function showUploadButton() {
-    readyToUpload.value = true;
-}
+
 
 async function submit() {
     const old = oldPassword.value;
@@ -133,6 +139,7 @@ async function submit() {
 }
 
 function checkFile(event) {
+    message.value = ""
     file.value = event.target.files[0]
     if(file.value.name) {
         const fileName = file.value.name;
@@ -150,22 +157,52 @@ function checkFile(event) {
 }
 
 async function uploadIvsr() {
+    uploadMessage.value = ""
     if(file.value) {
         const uploadFile = file.value;
         
         try {
+            isLoading.value = true;
             const res = await postFile(uploadFile)
+            isLoading.value = false;
+
+            if(res.ok) {
+                uploadMessage.value = "Data hentet!"
+    
+            } else if(res.status == 403) {
+                router.push('/')
+
+            } else {
+                uploadMessage.value = "Der skete en fejl :("
+            }
+
         } catch (error) {
             console.log(error)
         }
 
+        file.value = null;
+        readyToUpload.value = false;
     }
 }
 
 async function fetchSpData() {
+    uploadMessage.value = ""
+    isLoading.value = true;
+    readyToUpload.value = false;
     const token = localStorage.getItem("token")
-    const res = await fetchPost(token, '/api/sp/case', {});
+    const res = await fetchPost(token, '/api/mini/sp/case', {});
+    isLoading.value = false;
 
+    if(res.ok) {
+        
+        uploadMessage.value = "Data hentet!"
+
+    } else if (res.status == 403) {
+        router.push('/')
+    
+    } else {
+        uploadMessage.value = "Der skete en fejl :("
+    }
 }
 
 </script>

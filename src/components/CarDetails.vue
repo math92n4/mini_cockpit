@@ -1,6 +1,6 @@
 <template>
 
-  <div class="table-modal border">
+  <div class="table-modal border drop-shadow">
     
     <div class="top">
         <h2>DETALJER</h2>

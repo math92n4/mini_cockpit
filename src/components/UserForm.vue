@@ -4,18 +4,18 @@
     <img src="../assets/logo.png" alt="Logo">
   </div>
 
-  <form v-if="showForm" class="login" @submit.prevent="submit">
+  <form v-if="showForm" class="login drop-shadow" @submit.prevent="submit">
     <h2>{{ isRegister ? 'Registrer dig her!' : 'HEJ, OG VELKOMMEN!' }}</h2>
     <h3>{{ isRegister ? 'Gå tilbage til login, hvis du allerede er registreret...' : 'Du skal logge ind, hvis du vil videre...' }}</h3>
-    <input type="text" v-model="email" placeholder="Email" />
+    <input type="email" v-model="email" placeholder="Email" />
     <input type="password" v-model="password" placeholder="Kodeord" />
 
     <p v-if="isRegister">
-      <router-link to="/">Tilbage til login</router-link>
+      <router-link to="/" @click="resetResMessage">Tilbage til login</router-link>
     </p>
 
     <p v-if="!isRegister">
-      <router-link to="/register">Register dig her!</router-link>
+      <router-link to="/register" @click="resetResMessage">Register dig her!</router-link>
     </p>
 
     <p v-if="resMessage"> {{ resMessage }} </p>
@@ -40,6 +40,7 @@ export default {
       default: 'Login'
     },
   },
+  
   data() {
     return {
       email: '',
@@ -66,6 +67,8 @@ export default {
 
   methods: {
     async submit() {
+      this.resetResMessage();
+
       const store = useStore();
 
       const user = {
@@ -76,16 +79,38 @@ export default {
 
       if(this.isRegister) {
         const res = await fetchPost(user, '/api/mini/user/register')
+        
+        if(res.status == 403) {
+          this.resMessage = "Adgang nægtet..."
+
+        } else if(res.status == 409) {
+          this.resMessage = "Du eksisterer allerede i systemet..."
+        
+        } else if(res.status == 200) {
+          this.resMessage = `Email sendt til ${user.email}. Tjek eventuelt din spam mappe, hvis du ikke kan finde den`
+        
+        } else {
+          this.resMessage = "En fejl er opstået..."
+        }
+
       } else {
         const res = await store.login(user)
+        
         if(!res.ok) {
-          this.resMessage = "Noget gik galt"
+          this.resMessage = "Du matcher ikke nogen vi kender..."
         }
       }
 
+    },
+    resetResMessage() {
+      this.resMessage = '';
     }
   },
   mounted() {
+    const store = useStore();
+    if(store.isLoggedIn) {
+      this.router.push("/cockpit")
+    }
     this.showForm = true;
   }
   
@@ -104,9 +129,10 @@ export default {
   max-width: 300px;
   margin: 50px auto;
   padding: 20px;
-  border: 1px solid #1f0e0e;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff;
+  align-items: center;
+  justify-content: center;
   
 }
 
@@ -162,6 +188,7 @@ input::placeholder, textarea::placeholder {
 .login button {
   width: 100%;
 }
+
 
 
 
