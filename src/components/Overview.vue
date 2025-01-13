@@ -20,11 +20,14 @@
 
         <div v-if="graphOptionsOpen" class="modal-overlay">
           <div class="modal">
-            <div class="login" style="width: 300px;">
+            <div class="check-graphs" style="width: 300px;">
 
-              
+              <div v-for="graph in graphOptions" :key="graph.id">
+                <input type="checkbox" :id="graph.id" v-model="graph.enabled" :value="graph.id">
+                <label :for="graph.id">{{ graph.name }}</label>
+              </div>
 
-              <button class="button">Gem</button>
+              <button class="button" @click="updateGraphOptions">Gem</button>
               <button class="button" @click="closeGraphOptions">Gå tilbage</button>
             </div>
           </div>
@@ -55,8 +58,44 @@ const graphOptions = ref([])
 
 async function openGraphOptions() {
   graphOptionsOpen.value = true
+  const token = localStorage.getItem('token')
+  const res = await fetch(`${API_URL}/api/mini/graph`, {
+    method: "GET",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
 
+  const data = await res.json();
+  graphOptions.value = data;
+  console.log(graphOptions.value)
 }
+
+async function updateGraphOptions() {
+  
+  const token = localStorage.getItem('token')
+  const updatedGraphOptions = graphOptions.value.map(graph => ({
+    id: graph.id,
+    enabled: graph.enabled,
+    name: graph.name
+  }))
+  
+  const res = await fetch(`${API_URL}/api/mini/graph/enable`, {
+    method: "POST",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedGraphOptions)
+  })
+
+  if(res.ok) {
+    closeGraphOptions();
+    const updatedData = await fetchMetabaseQuestion();
+    iframeSrcs.value = updatedData.map((element) => element.url);
+  }
+};
 
 function closeGraphOptions() {
   graphOptionsOpen.value = false;
@@ -119,6 +158,7 @@ async function fetchMetabaseQuestion() {
     
     if(res.ok) {
       const data = await res.json();
+      console.log(data)
       return data;
     }
   }
@@ -266,6 +306,10 @@ export default {
 </script>
 
 <style>
+
+.check-graphs {
+  background-color: #ffffff;
+}
 
 .container {
   max-width: 90%;
