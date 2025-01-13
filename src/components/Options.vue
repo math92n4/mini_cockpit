@@ -51,7 +51,9 @@
 
             <input type="file" id="file" @change="checkFile"></input>
 
-            <button class="button" @click="fetchSpData">Hent sharepoint data</button>
+            <button class="button" @click="fetchSpData(sp)">Hent sharepoint data</button>
+
+            <button class="button" @click="fetchSpData(ivsr)">Hent Ivsr data</button>
 
             <div v-if="isLoading" class="spinner-container">
                 <img src="/src/assets/spinner.gif">
@@ -185,12 +187,18 @@ async function uploadIvsr() {
     }
 }
 
-async function fetchSpData() {
+async function fetchSpData(type) {
     uploadMessage.value = ""
     isLoading.value = true;
     readyToUpload.value = false;
     const token = localStorage.getItem("token")
-    const res = await fetchPost(token, '/api/mini/sp/case', {});
+    let url = "";
+    if(type == 'sp') {
+        url = '/api/mini/sp/case'
+    } else {
+        url = '/api/mini/ivsr'
+    }
+    const res = await fetchPost(token, url, {});
     isLoading.value = false;
 
     if(res.ok) {
@@ -204,6 +212,8 @@ async function fetchSpData() {
         uploadMessage.value = "Der skete en fejl :("
     }
 }
+
+
 
 </script>
 
