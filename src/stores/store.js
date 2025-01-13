@@ -15,6 +15,11 @@ export const useStore = defineStore('user', () => {
 
         try {
             const res = await fetchPost(credentials,'/api/mini/user/authenticate')
+            
+            if(!res.ok) {
+                return res;
+            }
+
             const data = await res.json()
             console.log(data)
 
@@ -24,8 +29,6 @@ export const useStore = defineStore('user', () => {
                 isLoggedIn.value = true;
                 router.push("/cockpit")
                 
-            } else {
-                return res;
             }
             
             

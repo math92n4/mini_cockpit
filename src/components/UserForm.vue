@@ -97,6 +97,7 @@ export default {
         const res = await store.login(user)
         
         if(!res.ok) {
+          console.log("HEJ")
           this.resMessage = "Du matcher ikke nogen vi kender..."
         }
       }

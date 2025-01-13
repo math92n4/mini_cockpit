@@ -1,3 +1,5 @@
-//const API_URL = "http://localhost:8084";
-const API_URL = "https://matwn.dk";
-export default API_URL;
+const API_URL = import.meta.env.VITE_APP_API_URL;
+const METABASE_API_URL = import.meta.env.VITE_APP_METABASE_API_URL;
+const METABASE_API_KEY = import.meta.env.VITE_APP_METABASE_API_KEY;
+
+export { API_URL, METABASE_API_URL, METABASE_API_KEY };

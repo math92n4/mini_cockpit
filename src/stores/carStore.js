@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import API_URL from './globals';
+import { API_URL } from './globals';
 import { useStore } from './store';
 import { fetchGet, fetchPost } from './auth';
 

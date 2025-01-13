@@ -2,12 +2,38 @@
     <div class="container border drop-shadow">
         <div class="top">
             <h2>OVERSIGT</h2>
+
+            <div class="right">
+
+              <div class="inputs">
+
+                <button @click="openGraphOptions">Vælg grafer</button>
+
+                <a href="https://matwn.dk/metabase/question/notebook" target="_blank">
+                  <button class="button">Opret graf</button>
+                </a>
+
+              </div>
+        </div>
+
+    </div>
+
+        <div v-if="graphOptionsOpen" class="modal-overlay">
+          <div class="modal">
+            <div class="login" style="width: 300px;">
+
+              
+
+              <button class="button">Gem</button>
+              <button class="button" @click="closeGraphOptions">Gå tilbage</button>
+            </div>
+          </div>
         </div>
 
         <div class="charts-grid">
-          <div class="iframe-container">
+          <div class="iframe-container" v-for="(src, index) in iframeSrcs" :key="index">
             <iframe
-              :src="iframeSrc" frameborder="0">
+              :src="src" frameborder="0">
             </iframe>
           </div>
         </div>
@@ -19,24 +45,82 @@
 <script setup>
 import { createChart } from '../stores/util/chart/chartUtil'
 import { useCarsStore } from '@/stores/carStore';
-import API_URL from '@/stores/globals';
+import { API_URL, METABASE_API_KEY, METABASE_API_URL } from '@/stores/globals';
 import { useStore } from '@/stores/store';
 import { onMounted, ref } from 'vue';
 
-const iframeSrc = ref('');
+const iframeSrcs = ref([]);
+const graphOptionsOpen = ref(false);
+const graphOptions = ref([])
+
+async function openGraphOptions() {
+  graphOptionsOpen.value = true
+
+}
+
+function closeGraphOptions() {
+  graphOptionsOpen.value = false;
+}
 
 onMounted(async () => {
   const data = await fetchMetabaseQuestion();
-  iframeSrc.value = data.url;
-  console.log(iframeSrc.value);
+  
+  iframeSrcs.value = data.map((element) => element.url)
+  console.log(iframeSrcs.value)
+
 })
 
 async function fetchMetabaseQuestion() {
-  const res = await fetch(`${API_URL}/api/mini/metabase/34`)
-  if(res.ok) {
-    console.log("suck cock");
-    const data = await res.json();
-    return data;
+
+  const graphs = []
+  const metabaseRes = await fetch(`${METABASE_API_URL}/api/card?filter=database eq 6`, {
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": METABASE_API_KEY,
+    },
+    method: "GET"
+  })
+
+  if(metabaseRes.ok) {
+    const metabaseData = await metabaseRes.json();
+
+    
+    console.log(metabaseData)
+
+    metabaseData.forEach(async (element) => {
+
+      if(!element.enable_embedding) {
+        
+        await fetch(`${METABASE_API_URL}/api/card/${element.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": METABASE_API_KEY,
+          },
+          body: JSON.stringify({ enable_embedding: true })
+
+        })
+      }
+
+      graphs.push({ id: element.id, name: element.name });
+    })
+
+    console.log(graphs)
+    const token = localStorage.getItem('token')
+
+    const res = await fetch(`${API_URL}/api/mini/metabase`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(graphs),
+      method: "POST"
+    })
+    
+    if(res.ok) {
+      const data = await res.json();
+      return data;
+    }
   }
 }
 
@@ -217,12 +301,11 @@ export default {
 
 
 iframe {
-  height: 600px; 
+  height: 500px; 
   width: 100%; 
-  
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .charts-grid {
     grid-template-columns: repeat(1, 1fr);
   }

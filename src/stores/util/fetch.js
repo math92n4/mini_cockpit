@@ -1,4 +1,4 @@
-import API_URL from '../globals.js'
+import { API_URL } from '../globals.js'
 
 export async function fetchGet(path) {
     const response = await fetch(`${API_URL}${path}`, {

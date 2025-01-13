@@ -1,4 +1,4 @@
-import API_URL from "./globals"
+import { API_URL } from "./globals"
 import { useRouter } from "vue-router";
 
 

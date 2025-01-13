@@ -9,6 +9,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      VITE_APP_API_URL: ${{ secrets.VITE_APP_API_URL }}
+      VITE_APP_METABASE_API_URL: ${{ secrets.VITE_APP_METABASE_API_URL }}
+      VITE_APP_METABASE_API_KEY: ${{ secrets.VITE_APP_METABASE_API_KEY }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
