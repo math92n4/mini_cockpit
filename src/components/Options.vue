@@ -51,9 +51,9 @@
 
             <input type="file" id="file" @change="checkFile"></input>
 
-            <button class="button" @click="fetchSpData(sp)">Hent sharepoint data</button>
+            <button class="button" @click="fetchSpData('sp')">Hent sharepoint data</button>
 
-            <button class="button" @click="fetchSpData(ivsr)">Hent Ivsr data</button>
+            <button class="button" @click="fetchSpData('ivsr')">Hent Ivsr data</button>
 
             <div v-if="isLoading" class="spinner-container">
                 <img src="/src/assets/spinner.gif">
