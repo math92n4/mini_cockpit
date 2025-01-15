@@ -12,7 +12,7 @@
                 <p v-if="updateMessage"> {{ updateMessage }} </p>
                 <button @click="deleteDetails(car.productionNumber)">Slet</button>
                 <button @click="updateCarClick">Opdater</button>
-                <button class="button" @click="deselectCar">Gå tilbage</button>
+                <button @click="deselectCar">Gå tilbage</button>
 
             </div>
 

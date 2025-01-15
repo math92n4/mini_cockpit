@@ -61,6 +61,14 @@
 
             <p v-if="uploadMessage">{{ uploadMessage }}</p>
             
+            <div v-if="fileErrorMessages.length > 0">
+
+                <div v-for="(message, index) in fileErrorMessages" :key="index">
+                    <p style="color: red;">{{ message }}</p>
+                </div>
+                
+            </div>
+
         </div>
 
   </div>
@@ -83,6 +91,8 @@ const store = useStore();
 const isLoading = ref(false)
 const uploadMessage = ref('')
 const changePassMessage = ref('')
+
+const fileErrorMessages = ref([])
 
 const profile = ref('true')
 
@@ -167,7 +177,7 @@ async function uploadIvsr() {
             isLoading.value = true;
             const res = await postFile(uploadFile)
             isLoading.value = false;
-
+            
             if(res.ok) {
                 uploadMessage.value = "Data hentet!"
     
@@ -175,7 +185,10 @@ async function uploadIvsr() {
                 router.push('/')
 
             } else {
-                uploadMessage.value = "Der skete en fejl :("
+                const error = await res.json()
+                console.log(error);
+                
+                fileErrorMessages.value = error.messages;
             }
 
         } catch (error) {

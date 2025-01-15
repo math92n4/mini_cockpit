@@ -25,7 +25,7 @@
         <table>
             <thead>
                 <tr>
-                    <th v-for="header in headers" :key="header.value">{{ header.label }}</th>
+                    <th style="cursor: pointer;" v-for="header in headers" :key="header.value" @click="filterHeader(header.value)">{{ header.label }}</th>
                 </tr>
             </thead>
 
@@ -117,12 +117,12 @@ const carSelected = ref(null);
 const modalOpen = ref(false);
 
 const headers = [
-  { value: 'onlineNr', label: 'Online nummer' },
-  { value: 'model', label: 'Model' },
-  { value: 'modelCode', label: 'Model kode' },
-  { value: 'agreementDate', label: 'Dato' },
-  { value: 'sharepointData', label: 'Sharepoint data'},
-  { value: 'ivsrData', label: 'Ivsr data' }
+  { value: 'productionNumber', label: 'Online nummer', isAcending: true },
+  { value: 'modelDescription', label: 'Model', isAcending: true },
+  { value: 'modelCode', label: 'Model kode', isAcending: true },
+  { value: 'agreementDate', label: 'Dato for aftale', isAcending: true },
+  { value: 'sharepointData', label: 'Sharepoint data', isAcending: true },
+  { value: 'ivsrData', label: 'Ivsr data', isAcending: true }
 ]
 
 const goToCar = (car) => {
@@ -180,9 +180,83 @@ const filterCars = () => {
       return agreementDate === inputDate.value;  
     })
   }
-  console.log(filteredCars);
 
   cars.value = filteredCars
+}
+
+
+
+const filterHeader = (header) => {
+  let sortedCars = [...cars.value];
+  
+  const headerField = headers.find(headerValue => headerValue.value === header)
+
+  
+  sortedCars.sort((a, b) => {
+
+    if (header === "productionNumber") {
+      return headerField.isAcending ? a.productionNumber - b.productionNumber : b.productionNumber - a.productionNumber;
+    
+    } else if (header === "modelDescription") {
+      return sortStrings(a.modelDescription, b.modelDescription, headerField.isAcending)
+
+    } else if (header === "modelCode") {
+      return sortStrings(a.modelCode, b.modelCode, headerField.isAcending)
+
+    } else if (header === "agreementDate") {
+      return sortDates(a.purchaseAgreementDate, b.purchaseAgreementDate, headerField.isAcending)
+    
+    } else if (header === "sharepointData") {
+      return sortBool(a.sharepointData, b.sharepointData, headerField.isAcending);
+    
+    } else if (header === "ivsrData") {
+      return sortBool(a.ivsrData, b.ivsrData, headerField.isAcending)
+    }
+  })  
+
+
+  headerField.isAcending = !headerField.isAcending
+
+  cars.value = sortedCars;
+}
+
+const sortStrings = (a, b, isAscending) => {
+  if(a === null && b === null) {
+    return 0;
+  }
+  if(a === null || a === 'null') {
+    return isAscending ? 1 : -1
+  }
+  if(b === null || b === 'null') {
+    return isAscending ? -1 : 1
+  }
+
+  return isAscending ? a.localeCompare(b) : b.localeCompare(a)
+}
+
+const sortDates = (a, b, isAscending) => {
+  if(a === null && b === null) {
+    return 0
+  }
+  if(a === null || a === 'null') {
+    return isAscending ? 1 : -1
+  }
+  if(b === null || b === 'null') {
+    return isAscending ? -1 : 1
+  }
+
+  const dateA = new Date(a);
+  const dateB = new Date(b);
+
+  return isAscending ? dateB - dateA : dateA - dateB;
+}
+
+const sortBool = (a, b, isAscending) => {
+  if(a === b) {
+    return 0
+  }
+
+  return isAscending ? (a ? -1 : 1) : (a ? 1 : -1)
 }
 
 
@@ -198,7 +272,15 @@ const add = async () => {
   const postProductionNumber = inputProductionNumber.value;
   console.log(postProductionNumber)
   const post = await carsStore.postCar(postProductionNumber);
-  createMessage.value = `${postProductionNumber} oprettet!`
+  if(post.ok) {
+    await carsStore.fetchCars();
+    modalOpen.value = false;
+  } else if(post.status == 400) {
+    createMessage.value = `${postProductionNumber} eksisterer allerede`;
+  } else {
+    createMessage.value = "Server fejl"
+  }
+  
 }
 
 </script>
@@ -285,6 +367,7 @@ const add = async () => {
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 tbody {
@@ -304,6 +387,7 @@ thead th {
 
 tbody tr {
   border-bottom: 1px solid #ddd;
+  height: 40px;
 }
 
 tbody tr:nth-child(even) {
@@ -318,6 +402,7 @@ tbody td {
   padding: 10px;
   font-size: 16px;
   color: #333;
+  height: 40px;
 }
 
 .table-modal {

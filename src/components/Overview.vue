@@ -9,9 +9,9 @@
 
                 <button @click="openGraphOptions">Vælg grafer</button>
 
-                <a href="https://matwn.dk/metabase/question/notebook" target="_blank">
-                  <button class="button">Opret graf</button>
-                </a>
+                  
+                <button @click="openMetabase">Opret graf</button>
+                
 
               </div>
         </div>
@@ -19,17 +19,22 @@
     </div>
 
         <div v-if="graphOptionsOpen" class="modal-overlay">
-          <div class="modal">
-            <div class="check-graphs" style="width: 300px;">
+          <div class="modal-graph">
+            
+            <div class="check-graphs">
 
-              <div v-for="graph in graphOptions" :key="graph.id">
+              <div v-for="graph in graphOptions" :key="graph.id" class="graph-option">
                 <input type="checkbox" :id="graph.id" v-model="graph.enabled" :value="graph.id">
                 <label :for="graph.id">{{ graph.name }}</label>
               </div>
 
-              <button class="button" @click="updateGraphOptions">Gem</button>
-              <button class="button" @click="closeGraphOptions">Gå tilbage</button>
+          
+                <button class="button" style="margin-top: 20px;" @click="updateGraphOptions">Gem</button>
+                <button class="button" @click="closeGraphOptions">Gå tilbage</button>
+              
+
             </div>
+            
           </div>
         </div>
 
@@ -47,9 +52,7 @@
 
 <script setup>
 import { createChart } from '../stores/util/chart/chartUtil'
-import { useCarsStore } from '@/stores/carStore';
 import { API_URL, METABASE_API_KEY, METABASE_API_URL } from '@/stores/globals';
-import { useStore } from '@/stores/store';
 import { onMounted, ref } from 'vue';
 
 const iframeSrcs = ref([]);
@@ -105,7 +108,6 @@ onMounted(async () => {
   const data = await fetchMetabaseQuestion();
   
   iframeSrcs.value = data.map((element) => element.url)
-  console.log(iframeSrcs.value)
 
 })
 
@@ -124,7 +126,6 @@ async function fetchMetabaseQuestion() {
     const metabaseData = await metabaseRes.json();
 
     
-    console.log(metabaseData)
 
     metabaseData.forEach(async (element) => {
 
@@ -144,7 +145,6 @@ async function fetchMetabaseQuestion() {
       graphs.push({ id: element.id, name: element.name });
     })
 
-    console.log(graphs)
     const token = localStorage.getItem('token')
 
     const res = await fetch(`${API_URL}/api/mini/metabase`, {
@@ -158,10 +158,14 @@ async function fetchMetabaseQuestion() {
     
     if(res.ok) {
       const data = await res.json();
-      console.log(data)
+
       return data;
     }
   }
+}
+
+function openMetabase() {
+  window.open("https://matwn.dk/metabase/question/notebook", "_blank")
 }
 
 
@@ -307,9 +311,16 @@ export default {
 
 <style>
 
-.check-graphs {
+.modal-graph {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; 
+  border-radius: 5px;
   background-color: #ffffff;
+  width: 300px;
 }
+
 
 .container {
   max-width: 90%;
@@ -347,6 +358,12 @@ export default {
 iframe {
   height: 500px; 
   width: 100%; 
+}
+
+.check-graphs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 @media (max-width: 1000px) {

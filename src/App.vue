@@ -13,7 +13,6 @@ const currentSection = ref('Cockpit')
 
 const changeSection = (section) => {
   currentSection.value = section
-  console.log(currentSection.value)
 }
 
 

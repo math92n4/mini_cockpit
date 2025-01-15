@@ -21,7 +21,6 @@ export const useStore = defineStore('user', () => {
             }
 
             const data = await res.json()
-            console.log(data)
 
             if(data.token) {
                 user.value = data;

@@ -19,7 +19,6 @@ export async function fetchGet(token, url) {
         }
 
         const data = await res.json()
-        console.log(data);
         return data;
 
     } catch (error) {
@@ -67,7 +66,6 @@ export async function fetchPut(token, url, body) {
         }
 
         const data = await res.json()
-        console.log(data);
         return data;
 
     } catch (error) {
@@ -89,13 +87,6 @@ export async function postFile(file) {
             },
             body: formData
         });
-
-        console.log(res)
-
-
-        if(!res.ok) {
-            return false;
-        }
 
         
         return res;
@@ -119,7 +110,6 @@ export async function fetchDelete(id) {
             
         });
 
-        console.log(res)
 
         
         return res;
@@ -142,8 +132,6 @@ export async function updateCar(car) {
             },
             body: JSON.stringify(car)
         });
-
-        console.log(res)
 
         
         return res;
